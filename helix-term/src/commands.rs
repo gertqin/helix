@@ -403,6 +403,7 @@ impl MappableCommand {
         goto_file, "Goto files/URLs in selections",
         goto_file_hsplit, "Goto files in selections (hsplit)",
         goto_file_vsplit, "Goto files in selections (vsplit)",
+        switch_source_header_file, "Switch c(pp) source and header file",
         goto_reference, "Goto references",
         goto_window_top, "Goto window top",
         goto_window_center, "Goto window center",
@@ -1374,6 +1375,44 @@ fn open_url(cx: &mut Context, url: Url, action: Action) {
             } else if let Err(e) = cx.editor.open(path, action) {
                 cx.editor.set_error(format!("Open file failed: {:?}", e));
             }
+        }
+    }
+}
+
+fn switch_source_header_file(cx: &mut Context) {
+    let doc = doc!(cx.editor);
+    let mut path = doc
+        .path()
+        .map(|path| path.to_path_buf())
+        .unwrap_or_default();
+
+    let opt_ext = path.extension();
+    match opt_ext {
+        Some(ext) => {
+            let ext_str = ext.to_str().unwrap();
+            match ext_str {
+                "cpp" => {
+                    path.set_extension("h");
+                    if let Err(e) = cx.editor.open(&path, Action::Replace) {
+                        cx.editor.set_error(format!("Open file failed: {:?}", e));
+                    }
+                }
+                "h" => {
+                    path.set_extension("cpp");
+                    if let Err(e) = cx.editor.open(&path, Action::Replace) {
+                        cx.editor.set_error(format!("Open file failed: {:?}", e));
+                    }
+                }
+                _ => {
+                    cx.editor.set_error(format!(
+                        "Current file extension .{}, cannot switch source/header",
+                        ext_str
+                    ));
+                }
+            }
+        }
+        None => {
+            cx.editor.set_error("Current file has no extension.");
         }
     }
 }
