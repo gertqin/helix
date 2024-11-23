@@ -156,8 +156,8 @@ pub fn default() -> HashMap<Mode, KeyTrie> {
         // paste_all
         "P" => paste_before,
 
-        "Q" => record_macro,
-        "q" => replay_macro,
+        "A-q" => record_macro,
+        "Q" => replay_macro,
 
         ">" => indent,
         "<" => unindent,
@@ -289,6 +289,21 @@ pub fn default() -> HashMap<Mode, KeyTrie> {
             "C" => toggle_block_comments,
             "A-c" => toggle_line_comments,
             "?" => command_palette,
+        },
+        "q" => { "Alt" sticky=true
+            "." => repeat_last_motion,
+            "s" => split_selection_on_newline,
+            "p" | "left" => select_prev_sibling,
+            "n" | "right" => select_next_sibling,
+            "o" | "up" => expand_selection,
+            "i" | "down" => shrink_selection,
+            "a" => select_all_siblings,
+            "I" => select_all_children,
+            ")" => rotate_selection_contents_forward,
+            "(" => rotate_selection_contents_backward,
+
+            "J" => join_selections_space,
+            "," => remove_primary_selection,
         },
         "z" => { "View" sticky=true
             "z" | "c" => align_view_center,
