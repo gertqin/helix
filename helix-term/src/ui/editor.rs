@@ -890,6 +890,8 @@ impl EditorView {
                 if current_mode == Mode::Insert {
                     // how we entered insert mode is important, and we should track that so
                     // we can repeat the side effect.
+                    self.keymaps.sticky = None;
+                    cxt.editor.autoinfo = None;
                     self.last_insert.0 = command.clone();
                     self.last_insert.1.clear();
                 }
